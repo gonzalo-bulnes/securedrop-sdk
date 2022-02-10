@@ -69,6 +69,21 @@ class TestAPI(TestShared):
         with pytest.raises(AuthError):
             self.api.authenticate()
 
+    @vcr.use_cassette("data/test-auth-token-expiration-valid-iso8061-and-rfc3339.yml")
+    def test_auth_token_expiration_valid_iso8061_and_rfc3339(self):
+        self.api = API(self.server, self.username, self.password, str(self.totp.now()))
+        assert self.api.authenticate()
+
+    @vcr.use_cassette("data/test-auth-token-expiration-valid-iso8061-z.yml")
+    def test_auth_token_expiration_valid_iso8061_z(self):
+        self.api = API(self.server, self.username, self.password, str(self.totp.now()))
+        assert self.api.authenticate()
+
+    @vcr.use_cassette("data/test-auth-token-expiration-invalid-tz-offset-and-z.yml")
+    def test_auth_token_expiration_invalid_tz_offset_and_z(self):
+        self.api = API(self.server, self.username, self.password, str(self.totp.now()))
+        assert self.api.authenticate()
+
     def test_api_auth(self):
         super().api_auth()
 
